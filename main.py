@@ -172,7 +172,7 @@ def signup_post(
 
 @app.get("/login", response_class=HTMLResponse)
 def login_page(request: Request):
-    return templates.TemplateResponse(request=request, name="login.html")
+    return templates.TemplateResponse(request=request, name="frontend/login.html")
 
 @app.post("/login")
 def login_post(request: Request, email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
