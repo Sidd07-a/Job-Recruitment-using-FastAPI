@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Review | TalentBridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --ink: #0f1117; --slate: #3d4451; --mist: #8891a4; --line: #e8eaed;
+            --surface: #f7f8fa; --white: #ffffff; --teal: #0ea5a0; --teal-dk: #0c8f8a;
+            --green: #22c55e; --amber: #f59e0b; --red: #ef4444; --purple: #8b5cf6;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--ink); padding: 40px 5%; }
+        .page-inner { max-width: 860px; margin: auto; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--mist); font-size: 13px; text-decoration: none; margin-bottom: 24px; transition: color 0.2s; }
+        .back-link:hover { color: var(--teal); }
+
+        .grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+
+        .card { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 28px; }
+        .card-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+
+        /* Candidate header */
+        .candidate-hd { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+        .avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), #0c8f8a); display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 22px; color: white; flex-shrink: 0; }
+        .cand-name { font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+        .cand-email { font-size: 14px; color: var(--mist); }
+        .cand-bio { font-size: 14px; color: var(--slate); line-height: 1.6; margin-bottom: 18px; }
+
+        /* Skills */
+        .skills-section { margin-bottom: 18px; }
+        .skills-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--mist); margin-bottom: 10px; }
+        .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .skill-tag { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .skill-match { background: #dcfce7; color: #16a34a; }
+        .skill-no { background: var(--surface); color: var(--mist); }
+
+        /* Match score */
+        .match-block { background: var(--surface); border-radius: 10px; padding: 16px; margin-bottom: 18px; }
+        .match-lbl { font-size: 12px; color: var(--mist); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+        .match-score-row { display: flex; align-items: center; gap: 12px; }
+        .big-score { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--ink); }
+        .match-bar-wrap { flex: 1; }
+        .match-bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+        .match-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--teal), #05d4ce); transition: width 0.5s; }
+        .match-sub { font-size: 12px; color: var(--mist); margin-top: 5px; }
+
+        /* Cover note */
+        .cover-note { background: #f8f9fa; border-left: 3px solid var(--teal); padding: 14px 16px; border-radius: 0 8px 8px 0; font-size: 14px; color: var(--slate); line-height: 1.6; font-style: italic; }
+
+        /* Resume link */
+        .resume-link { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: #f0fafa; border-radius: 8px; text-decoration: none; color: var(--teal); font-size: 13px; font-weight: 600; margin-top: 12px; }
+        .resume-link:hover { background: #e0f5f4; }
+
+        /* Sidebar cards */
+        .sidebar { display: flex; flex-direction: column; gap: 16px; }
+        .status-badge {
+            display: inline-block; padding: 5px 14px; border-radius: 20px;
+            font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .s-applied { background: #e0f2fe; color: #0369a1; }
+        .s-reviewing { background: #fef9c3; color: #a16207; }
+        .s-interview_scheduled { background: #ede9fe; color: #7c3aed; }
+        .s-accepted { background: #dcfce7; color: #16a34a; }
+        .s-rejected { background: #fee2e2; color: #dc2626; }
+
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--slate); margin-bottom: 7px; }
+        select, input[type="date"], input[type="time"] {
+            width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 8px;
+            font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--ink); background: white; transition: border-color 0.2s;
+        }
+        select:focus, input:focus { outline: none; border-color: var(--teal); }
+        .btn-primary {
+            width: 100%; padding: 12px; background: var(--teal); color: white; border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.2s;
+        }
+        .btn-primary:hover { background: var(--teal-dk); }
+
+        .interview-scheduled { background: #ede9fe; border-radius: 10px; padding: 14px; text-align: center; }
+        .int-lbl { font-size: 11px; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; margin-bottom: 6px; }
+        .int-dt { font-family: 'DM Serif Display', serif; font-size: 20px; color: #4c1d95; }
+        .int-time { font-size: 14px; color: #7c3aed; }
+
+        .job-info-card { font-size: 14px; color: var(--slate); line-height: 1.8; }
+        .job-info-card strong { color: var(--ink); }
+    </style>
+</head>
+<body>
+    <div class="page-inner">
+        <a href="/" class="back-link">← Back to dashboard</a>
+
+        <div class="grid">
+            <!-- LEFT: CANDIDATE INFO -->
+            <div>
+                <div class="card" style="margin-bottom: 16px;">
+                    <div class="card-title">Candidate Profile</div>
+                    <div class="candidate-hd">
+                        <div class="avatar">{{ candidate.name[0] if candidate else '?' }}</div>
+                        <div>
+                            <div class="cand-name">{{ candidate.name if candidate else 'Unknown' }}</div>
+                            <div class="cand-email">{{ candidate.email if candidate else '' }}</div>
+                        </div>
+                    </div>
+
+                    {% if candidate and candidate.bio %}
+                    <p class="cand-bio">{{ candidate.bio }}</p>
+                    {% endif %}
+
+                    <!-- MATCH SCORE -->
+                    <div class="match-block">
+                        <div class="match-lbl">Skill Match Score</div>
+                        <div class="match-score-row">
+                            <div class="big-score">{{ application.match_score or 0 }}%</div>
+                            <div class="match-bar-wrap">
+                                <div class="match-bar"><div class="match-fill" style="width: {{ application.match_score or 0 }}%"></div></div>
+                                <div class="match-sub">vs required skills for this role</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SKILLS -->
+                    {% if candidate and candidate.skills %}
+                    <div class="skills-section">
+                        <div class="skills-label">Candidate Skills</div>
+                        <div class="skill-tags">
+                            {% set req_lower = job.required_skills.lower().split(',') if job else [] %}
+                            {% for skill in candidate.skills.split(',') %}
+                            {% set s = skill.strip() %}
+                            {% if s %}
+                            <span class="skill-tag {% if s.lower() in req_lower %}skill-match{% else %}skill-no{% endif %}">{{ s }}</span>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- COVER NOTE -->
+                    {% if application.cover_note %}
+                    <div class="skills-label" style="margin-bottom: 8px;">Cover Note</div>
+                    <div class="cover-note">{{ application.cover_note }}</div>
+                    {% endif %}
+
+                    <!-- RESUME -->
+                    {% if candidate and candidate.resume_path %}
+                    <a href="/static/{{ candidate.resume_path }}" target="_blank" class="resume-link">📄 Download Resume</a>
+                    {% endif %}
+                </div>
+
+                <!-- JOB DETAILS -->
+                <div class="card">
+                    <div class="card-title">Applied For</div>
+                    {% if job %}
+                    <div class="job-info-card">
+                        <strong>{{ job.title }}</strong><br>
+                        {{ job.company }} · {{ job.location }} · {{ job.job_type }}<br>
+                        {% if job.salary_range %}<span style="color:var(--teal)">{{ job.salary_range }}</span><br>{% endif %}
+                        <br>
+                        <strong>Required Skills:</strong> {{ job.required_skills }}<br><br>
+                        {{ job.description }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- RIGHT: ACTIONS -->
+            <div class="sidebar">
+                <!-- CURRENT STATUS -->
+                <div class="card">
+                    <div class="card-title">Application Status</div>
+                    <span class="status-badge s-{{ application.status }}">{{ application.status | replace('_', ' ') }}</span>
+                    <p style="font-size: 13px; color: var(--mist); margin-top: 10px;">Applied {{ application.applied_at }}</p>
+
+                    {% if current_user.role == 'recruiter' %}
+                    <form action="/applications/{{ application.id }}/status" method="post" style="margin-top: 16px;">
+                        <div class="form-group">
+                            <label>Update Status</label>
+                            <select name="status">
+                                {% for s in ['applied', 'reviewing', 'interview_scheduled', 'accepted', 'rejected'] %}
+                                <option value="{{ s }}" {% if application.status == s %}selected{% endif %}>{{ s | replace('_', ' ') | title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Update</button>
+                    </form>
+                    {% endif %}
+                </div>
+
+                <!-- INTERVIEW SCHEDULING -->
+                {% if current_user.role == 'recruiter' %}
+                <div class="card">
+                    <div class="card-title">Schedule Interview</div>
+                    {% if application.interview_date %}
+                    <div class="interview-scheduled">
+                        <div class="int-lbl">Scheduled</div>
+                        <div class="int-dt">{{ application.interview_date }}</div>
+                        <div class="int-time">{{ application.interview_time }}</div>
+                    </div>
+                    <p style="font-size: 12px; color: var(--mist); margin-top: 10px; text-align: center;">Reschedule below</p>
+                    {% endif %}
+                    <form action="/applications/{{ application.id }}/schedule" method="post" {% if application.interview_date %}style="margin-top: 12px;"{% endif %}>
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" name="interview_date" value="{{ application.interview_date or '' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Time</label>
+                            <input type="time" name="interview_time" value="{{ application.interview_time or '' }}" required>
+                        </div>
+                        <button type="submit" class="btn-primary">{{ 'Reschedule' if application.interview_date else 'Schedule Interview' }}</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Dashboard | TalentBridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --ink: #0f1117; --slate: #3d4451; --mist: #8891a4; --line: #e8eaed;
+            --surface: #f7f8fa; --white: #ffffff; --teal: #0ea5a0; --teal-dk: #0c8f8a;
+            --green: #22c55e; --amber: #f59e0b; --red: #ef4444; --purple: #8b5cf6;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--ink); }
+
+        nav {
+            background: white; border-bottom: 1px solid var(--line);
+            padding: 0 5%; display: flex; align-items: center; justify-content: space-between;
+            height: 64px; position: sticky; top: 0; z-index: 100;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 10px; }
+        .brand-icon { width: 34px; height: 34px; background: var(--teal); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .brand-icon svg { width: 18px; height: 18px; fill: white; }
+        .brand-name { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-user { font-size: 13px; color: var(--mist); }
+        .nav-user strong { color: var(--ink); }
+        .btn-nav { padding: 8px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; text-decoration: none; font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; }
+        .btn-outline-nav { border: 1.5px solid var(--line) !important; color: var(--slate); background: white; }
+        .btn-teal { background: var(--teal); color: white; }
+        .btn-teal:hover { background: var(--teal-dk); }
+
+        .main { padding: 36px 5%; max-width: 1400px; margin: auto; }
+
+        /* STATS */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 20px 24px; }
+        .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--mist); font-weight: 600; margin-bottom: 8px; }
+        .stat-value { font-family: 'DM Serif Display', serif; font-size: 36px; color: var(--ink); }
+        .stat-sub { font-size: 12px; color: var(--mist); margin-top: 4px; }
+
+        .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+        .section-card { background: white; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+        .section-hd {
+            padding: 18px 22px; border-bottom: 1px solid var(--line);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .section-hd h2 { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); }
+        .count-badge { background: var(--teal); color: white; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+
+        /* JOB LIST */
+        .job-item { padding: 18px 22px; border-bottom: 1px solid var(--line); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+        .job-item:last-child { border-bottom: none; }
+        .job-title { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+        .job-meta { font-size: 12px; color: var(--mist); }
+        .job-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .btn-sm {
+            padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+            text-decoration: none; font-family: 'DM Sans', sans-serif; cursor: pointer;
+        }
+        .btn-edit { border: 1.5px solid var(--line); color: var(--slate); background: white; }
+        .btn-edit:hover { border-color: var(--teal); color: var(--teal); }
+        .btn-delete { border: 1.5px solid #fecaca; color: var(--red); background: white; }
+        .btn-delete:hover { background: #fef2f2; }
+
+        /* APPLICATIONS LIST */
+        .app-item { padding: 18px 22px; border-bottom: 1px solid var(--line); }
+        .app-item:last-child { border-bottom: none; }
+        .app-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+        .app-candidate { font-size: 15px; font-weight: 600; color: var(--ink); }
+        .app-job { font-size: 12px; color: var(--mist); margin-top: 2px; }
+        .status-badge {
+            display: inline-block; padding: 3px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .s-applied { background: #e0f2fe; color: #0369a1; }
+        .s-reviewing { background: #fef9c3; color: #a16207; }
+        .s-interview_scheduled { background: #ede9fe; color: #7c3aed; }
+        .s-accepted { background: #dcfce7; color: #16a34a; }
+        .s-rejected { background: #fee2e2; color: #dc2626; }
+        .app-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+        .match-bar-wrap { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--mist); }
+        .match-bar { width: 80px; height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; }
+        .match-fill { height: 100%; border-radius: 3px; background: var(--teal); }
+        .btn-view { font-size: 12px; font-weight: 600; color: var(--teal); text-decoration: none; }
+        .btn-view:hover { text-decoration: underline; }
+
+        .empty-state { padding: 40px; text-align: center; color: var(--mist); font-size: 14px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">
+            <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+            <span class="brand-name">TalentBridge</span>
+        </div>
+        <div class="nav-right">
+            <span class="nav-user">Hi, <strong>{{ current_user.name }}</strong> · {{ current_user.company or 'Recruiter' }}</span>
+            <a href="/jobs/create" class="btn-nav btn-teal">+ Post Job</a>
+            <a href="/logout" class="btn-nav btn-outline-nav">Sign Out</a>
+        </div>
+    </nav>
+
+    <div class="main">
+        <!-- STATS -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Active Jobs</div>
+                <div class="stat-value">{{ jobs|length }}</div>
+                <div class="stat-sub">Posted by you</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Applications</div>
+                <div class="stat-value">{{ total_apps }}</div>
+                <div class="stat-sub">{{ pending }} awaiting review</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Interviews Scheduled</div>
+                <div class="stat-value">{{ interviews }}</div>
+                <div class="stat-sub">Upcoming</div>
+            </div>
+        </div>
+
+        <div class="layout">
+            <!-- MY JOBS -->
+            <div class="section-card">
+                <div class="section-hd">
+                    <h2>Your Job Postings</h2>
+                    <span class="count-badge">{{ jobs|length }}</span>
+                </div>
+                {% if jobs %}
+                {% for job in jobs %}
+                <div class="job-item">
+                    <div>
+                        <div class="job-title">{{ job.title }}</div>
+                        <div class="job-meta">{{ job.location }} · {{ job.job_type }} · {{ job.created_at }}</div>
+                    </div>
+                    <div class="job-actions">
+                        <a href="/jobs/{{ job.id }}/edit" class="btn-sm btn-edit">Edit</a>
+                        <a href="/jobs/{{ job.id }}/delete" class="btn-sm btn-delete" onclick="return confirm('Delete this job?')">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="empty-state">No jobs posted yet. <a href="/jobs/create" style="color:var(--teal);">Post your first job →</a></div>
+                {% endif %}
+            </div>
+
+            <!-- APPLICATIONS -->
+            <div class="section-card">
+                <div class="section-hd">
+                    <h2>Applications</h2>
+                    <span class="count-badge">{{ total_apps }}</span>
+                </div>
+                {% if applications %}
+                {% for item in applications %}
+                <div class="app-item">
+                    <div class="app-top">
+                        <div>
+                            <div class="app-candidate">{{ item.candidate.name if item.candidate else 'Unknown' }}</div>
+                            <div class="app-job">{{ item.job.title if item.job else 'Job removed' }}</div>
+                        </div>
+                        <span class="status-badge s-{{ item.app.status }}">{{ item.app.status | replace('_', ' ') }}</span>
+                    </div>
+                    <div class="app-footer">
+                        <div class="match-bar-wrap">
+                            <div class="match-bar"><div class="match-fill" style="width: {{ item.app.match_score or 0 }}%"></div></div>
+                            {{ item.app.match_score or 0 }}% match
+                        </div>
+                        <a href="/applications/{{ item.app.id }}" class="btn-view">Review →</a>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="empty-state">No applications received yet.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | TalentBridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --ink: #0f1117; --slate: #3d4451; --mist: #8891a4; --line: #e8eaed;
+            --surface: #f7f8fa; --white: #ffffff; --teal: #0ea5a0; --teal-dk: #0c8f8a; --red: #ef4444;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--surface); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); width: 100%; max-width: 480px; padding: 48px; }
+        .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+        .brand-icon { width: 36px; height: 36px; background: var(--teal); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .brand-icon svg { width: 20px; height: 20px; fill: white; }
+        .brand-name { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); }
+        h2 { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--ink); margin-bottom: 6px; }
+        .sub { font-size: 14px; color: var(--mist); margin-bottom: 28px; }
+        .role-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .role-opt { position: relative; }
+        .role-opt input[type="radio"] { position: absolute; opacity: 0; width: 0; }
+        .role-label {
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            padding: 16px; border: 2px solid var(--line); border-radius: 10px;
+            cursor: pointer; transition: all 0.2s; text-align: center;
+        }
+        .role-label .icon { font-size: 24px; }
+        .role-label .lbl { font-size: 14px; font-weight: 600; color: var(--slate); }
+        .role-label .desc { font-size: 11px; color: var(--mist); }
+        .role-opt input:checked + .role-label { border-color: var(--teal); background: #f0fafa; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--slate); margin-bottom: 7px; }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%; padding: 12px 14px;
+            border: 1.5px solid var(--line); border-radius: 8px;
+            font-size: 15px; font-family: 'DM Sans', sans-serif; color: var(--ink);
+            background: white; transition: border-color 0.2s;
+        }
+        input:focus { outline: none; border-color: var(--teal); }
+        #company-field { display: none; }
+        .btn-primary {
+            width: 100%; padding: 14px; background: var(--teal); color: white;
+            border: none; border-radius: 8px; font-size: 15px; font-weight: 600;
+            font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.2s; margin-top: 8px;
+        }
+        .btn-primary:hover { background: var(--teal-dk); }
+        .footer-text { text-align: center; margin-top: 20px; font-size: 14px; color: var(--mist); }
+        .footer-text a { color: var(--teal); text-decoration: none; font-weight: 600; }
+        .error { background: #fef2f2; border: 1px solid #fecaca; color: var(--red); padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 16px; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="card">
+        <div class="brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+            </div>
+            <span class="brand-name">TalentBridge</span>
+        </div>
+        <h2>Create your account</h2>
+        <p class="sub">Join thousands of professionals on TalentBridge.</p>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form action="/signup" method="post">
+            <div class="role-selector">
+                <div class="role-opt">
+                    <input type="radio" name="role" id="role-candidate" value="candidate" checked onchange="toggleCompany(this.value)">
+                    <label class="role-label" for="role-candidate">
+                        <span class="icon">🎯</span>
+                        <span class="lbl">Candidate</span>
+                        <span class="desc">Find your next role</span>
+                    </label>
+                </div>
+                <div class="role-opt">
+                    <input type="radio" name="role" id="role-recruiter" value="recruiter" onchange="toggleCompany(this.value)">
+                    <label class="role-label" for="role-recruiter">
+                        <span class="icon">🏢</span>
+                        <span class="lbl">Recruiter</span>
+                        <span class="desc">Hire top talent</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="Jane Smith" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group" id="company-field">
+                <label>Company Name</label>
+                <input type="text" name="company" placeholder="Acme Inc.">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn-primary">Create Account</button>
+        </form>
+
+        <div class="footer-text">
+            Already have an account? <a href="/login">Sign in</a>
+        </div>
+    </div>
+    <script>
+        function toggleCompany(role) {
+            document.getElementById('company-field').style.display = role === 'recruiter' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

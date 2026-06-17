@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Job | TalentBridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --ink: #0f1117; --slate: #3d4451; --mist: #8891a4; --line: #e8eaed;
+            --surface: #f7f8fa; --white: #ffffff; --teal: #0ea5a0; --teal-dk: #0c8f8a;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--surface); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); width: 100%; max-width: 560px; padding: 40px 48px; }
+        .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--mist); font-size: 13px; text-decoration: none; margin-bottom: 28px; transition: color 0.2s; }
+        .back-link:hover { color: var(--teal); }
+        h2 { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--ink); margin-bottom: 6px; }
+        .sub { font-size: 14px; color: var(--mist); margin-bottom: 28px; }
+        .form-group { margin-bottom: 18px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--slate); margin-bottom: 7px; }
+        input[type="text"], textarea, select {
+            width: 100%; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 8px;
+            font-size: 15px; font-family: 'DM Sans', sans-serif; color: var(--ink); background: white; transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--teal); }
+        textarea { resize: vertical; min-height: 100px; }
+        .hint { font-size: 12px; color: var(--mist); margin-top: 5px; }
+        .btn-primary {
+            width: 100%; padding: 14px; background: var(--teal); color: white; border: none; border-radius: 8px;
+            font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: background 0.2s; margin-top: 8px;
+        }
+        .btn-primary:hover { background: var(--teal-dk); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <a href="/" class="back-link">← Cancel</a>
+        <h2>Edit Job</h2>
+        <p class="sub">Update the details for this role.</p>
+
+        <form action="/jobs/{{ job.id }}/edit" method="post">
+            <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" name="title" value="{{ job.title }}" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location" value="{{ job.location }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Job Type</label>
+                    <select name="job_type">
+                        {% for opt in ['Full-time', 'Part-time', 'Contract', 'Remote', 'Internship'] %}
+                        <option value="{{ opt }}" {% if job.job_type == opt %}selected{% endif %}>{{ opt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Salary Range (optional)</label>
+                <input type="text" name="salary_range" value="{{ job.salary_range or '' }}">
+            </div>
+            <div class="form-group">
+                <label>Required Skills</label>
+                <input type="text" name="required_skills" value="{{ job.required_skills }}" required>
+                <div class="hint">Comma-separated.</div>
+            </div>
+            <div class="form-group">
+                <label>Job Description</label>
+                <textarea name="description" required>{{ job.description }}</textarea>
+            </div>
+            <button type="submit" class="btn-primary">Save Changes</button>
+        </form>
+    </div>
+</body>
+</html>
